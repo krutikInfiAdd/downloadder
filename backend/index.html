@@ -1,0 +1,115 @@
+const express = require("express");
+const puppeteer = require("puppeteer-extra");
+const StealthPlugin = require("puppeteer-extra-plugin-stealth");
+const path = require("path");
+const https = require("https");
+
+puppeteer.use(StealthPlugin());
+
+const app = express();
+
+// Serve frontend
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "index.html"));
+});
+
+// Download route
+app.get("/download", async (req, res) => {
+    const reelUrl = req.query.url;
+
+    if (!reelUrl) {
+        return res.send("❌ No URL provided");
+    }
+
+    try {
+        const browser = await puppeteer.launch({
+            headless: true, // set false for debugging
+            args: ["--no-sandbox"]
+        });
+
+        const page = await browser.newPage();
+
+        await page.setUserAgent(
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36"
+        );
+
+        await page.setExtraHTTPHeaders({
+            "accept-language": "en-US,en;q=0.9"
+        });
+
+        let videoUrl = null;
+
+        // 🎯 Capture video from network
+        page.on("response", async (response) => {
+            try {
+                const url = response.url();
+
+                if (url.includes(".mp4") && url.includes("fbcdn")) {
+
+                    const cleanUrl = new URL(url);
+
+                    // ❌ remove partial stream params
+                    cleanUrl.searchParams.delete("bytestart");
+                    cleanUrl.searchParams.delete("byteend");
+
+                    const finalUrl = cleanUrl.toString();
+
+                    // pick best quality (longest url heuristic)
+                    if (!videoUrl || finalUrl.length > videoUrl.length) {
+                        videoUrl = finalUrl;
+                    }
+                }
+
+            } catch (e) {}
+        });
+
+        await page.goto(reelUrl, {
+            waitUntil: "networkidle2",
+            timeout: 60000
+        });
+
+        // wait for video network calls
+        await new Promise(resolve => setTimeout(resolve, 6000));
+
+        await browser.close();
+
+        if (!videoUrl) {
+            return res.send("❌ Video not found (login/private reel)");
+        }
+
+        console.log("✅ FINAL VIDEO URL:", videoUrl);
+
+        // ✅ Download video properly
+        https.get(videoUrl, {
+            headers: {
+                "User-Agent": "Mozilla/5.0",
+                "Referer": "https://www.instagram.com/"
+            }
+        }, (videoRes) => {
+
+            const contentType = videoRes.headers["content-type"];
+
+            if (!contentType || !contentType.includes("video")) {
+                return res.send("❌ Instagram blocked (not video stream)");
+            }
+
+            res.setHeader("Content-Disposition", "attachment; filename=reel.mp4");
+            res.setHeader("Content-Type", "video/mp4");
+
+            videoRes.pipe(res);
+
+        }).on("error", (err) => {
+            console.log(err);
+            res.send("❌ Download error");
+        });
+
+    } catch (err) {
+        console.log(err);
+        res.send("❌ Server error");
+    }
+});
+
+// Start server
+app.listen(3000, () => {
+    console.log("🚀 Server running at http://localhost:3000");
+});

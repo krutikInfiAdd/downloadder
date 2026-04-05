@@ -1,0 +1,11 @@
+| Platform  | Endpoint          |
+| --------- | ----------------- |
+| Instagram | `/instagram?url=` |
+| TikTok    | `/tiktok?url=`    |
+| Facebook  | `/facebook?url=`  |
+| Twitter   | `/twitter?url=`   |
+| YouTube   | `/youtube?url=`   |
+| MediaFire | `/mediafire?url=` |
+| CapCut    | `/capcut?url=`    |
+| Drive     | `/drive?url=`     |
+| Pinterest | `/pinterest?url=` |

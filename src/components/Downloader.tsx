@@ -25,6 +25,7 @@ export const Downloader: React.FC<DownloaderProps> = ({ platform, title, placeho
 
   const handleDownload = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(`${url}`);
     if (!url) return;
 
     setLoading(true);
@@ -32,12 +33,24 @@ export const Downloader: React.FC<DownloaderProps> = ({ platform, title, placeho
     setResult(null);
 
     try {
-      const response = await axios.get(`/${platform}`, {
-        params: { url }
+      const response = await axios.get(`http://localhost:3001/${platform}?url=${url}`);
+
+      const apiData = response.data;
+
+      if (!apiData.success || !apiData.data || apiData.data.length === 0) {
+        throw new Error("No media found");
+      }
+
+      const item = apiData.data[0];
+
+      setResult({
+        downloadUrl: item.url,
+        title: item.title || "Downloaded Media",
+        thumbnail: item.thumbnail || item.url
       });
-      setResult(response.data);
+
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to process URL. Please try again.');
+      setError(err.message || "Failed to process URL");
     } finally {
       setLoading(false);
     }
@@ -45,7 +58,7 @@ export const Downloader: React.FC<DownloaderProps> = ({ platform, title, placeho
 
   return (
     <div className="max-w-2xl mx-auto p-6">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100"
@@ -69,7 +82,7 @@ export const Downloader: React.FC<DownloaderProps> = ({ platform, title, placeho
                 className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all pr-12"
               />
               {url && (
-                <button 
+                <button
                   type="button"
                   onClick={() => setUrl('')}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
@@ -78,13 +91,12 @@ export const Downloader: React.FC<DownloaderProps> = ({ platform, title, placeho
                 </button>
               )}
             </div>
-            
+
             <button
               type="submit"
               disabled={loading || !url}
-              className={`w-full py-4 rounded-xl font-semibold text-white transition-all flex items-center justify-center gap-2 ${
-                loading || !url ? 'bg-gray-300 cursor-not-allowed' : `${color} hover:opacity-90 active:scale-[0.98]`
-              }`}
+              className={`w-full py-4 rounded-xl font-semibold text-white transition-all flex items-center justify-center gap-2 ${loading || !url ? 'bg-gray-300 cursor-not-allowed' : `${color} hover:opacity-90 active:scale-[0.98]`
+                }`}
             >
               {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -115,9 +127,9 @@ export const Downloader: React.FC<DownloaderProps> = ({ platform, title, placeho
                 className="mt-8 p-6 bg-gray-50 rounded-xl border border-gray-200"
               >
                 <div className="flex flex-col md:flex-row gap-6">
-                  <img 
-                    src={result.thumbnail} 
-                    alt="Thumbnail" 
+                  <img
+                    src={result.thumbnail}
+                    alt="Thumbnail"
                     className="w-full md:w-48 h-32 object-cover rounded-lg shadow-sm"
                     referrerPolicy="no-referrer"
                   />
