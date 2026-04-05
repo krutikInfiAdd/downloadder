@@ -1,6 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { Downloader } from './components/Downloader';
+import { PrivacyPolicy } from './components/PrivacyPolicy';
+import { TermsOfService } from './components/TermsOfService';
+import { ContactUs } from './components/ContactUs';
 import { 
   Instagram, 
   Facebook, 
@@ -109,6 +112,10 @@ export default function App() {
               color="bg-red-700"
             />
           } />
+
+          <Route path="privacy" element={<PrivacyPolicy />} />
+          <Route path="terms" element={<TermsOfService />} />
+          <Route path="contact" element={<ContactUs />} />
         </Route>
       </Routes>
     </BrowserRouter>

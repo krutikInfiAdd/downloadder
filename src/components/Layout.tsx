@@ -42,9 +42,9 @@ export const Layout: React.FC = () => {
               </h1>
             </div>
             <nav className="hidden md:flex items-center gap-6">
-              <a href="#" className="text-sm font-medium text-gray-500 hover:text-blue-600 transition-colors">How to Use</a>
-              <a href="#" className="text-sm font-medium text-gray-500 hover:text-blue-600 transition-colors">Privacy</a>
-              <a href="#" className="text-sm font-medium text-gray-500 hover:text-blue-600 transition-colors">Terms</a>
+              <NavLink to="/privacy" className={({ isActive }) => cn("text-sm font-medium transition-colors", isActive ? "text-blue-600" : "text-gray-500 hover:text-blue-600")}>Privacy Policy</NavLink>
+              <NavLink to="/terms" className={({ isActive }) => cn("text-sm font-medium transition-colors", isActive ? "text-blue-600" : "text-gray-500 hover:text-blue-600")}>Terms of Service</NavLink>
+              <NavLink to="/contact" className={({ isActive }) => cn("text-sm font-medium transition-colors", isActive ? "text-blue-600" : "text-gray-500 hover:text-blue-600")}>Contact Us</NavLink>
             </nav>
           </div>
         </div>
@@ -88,9 +88,9 @@ export const Layout: React.FC = () => {
             © 2026 MediaDownloader. All rights reserved.
           </p>
           <div className="mt-4 flex justify-center gap-6">
-            <a href="#" className="text-gray-400 hover:text-gray-600 text-xs">Privacy Policy</a>
-            <a href="#" className="text-gray-400 hover:text-gray-600 text-xs">Terms of Service</a>
-            <a href="#" className="text-gray-400 hover:text-gray-600 text-xs">Contact Us</a>
+            <NavLink to="/privacy" className="text-gray-400 hover:text-gray-600 text-xs">Privacy Policy</NavLink>
+            <NavLink to="/terms" className="text-gray-400 hover:text-gray-600 text-xs">Terms of Service</NavLink>
+            <NavLink to="/contact" className="text-gray-400 hover:text-gray-600 text-xs">Contact Us</NavLink>
           </div>
         </div>
       </footer>
