@@ -33,7 +33,7 @@ export const Downloader: React.FC<DownloaderProps> = ({ platform, title, placeho
     setResult(null);
 
     try {
-      const response = await axios.get(`http://localhost:3001/${platform}?url=${url}`);
+      const response = await axios.get(`https://downloaderbackend-5uz7.onrender.com/${platform}?url=${url}`);
 
       const apiData = response.data;
 
