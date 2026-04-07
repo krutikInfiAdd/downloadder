@@ -33,7 +33,10 @@ export const Downloader: React.FC<DownloaderProps> = ({ platform, title, placeho
     setResult(null);
 
     try {
-      const response = await axios.get(`https://downloaderbackend-5uz7.onrender.com/${platform}?url=${url}`);
+      const response = await axios.get(`https://downloaderbackend-5uz7.onrender.com/${platform}?url=${url}`,
+        {
+          timeout: 50000 // 50 seconds (in milliseconds)
+        });
 
       const apiData = response.data;
 
@@ -42,6 +45,23 @@ export const Downloader: React.FC<DownloaderProps> = ({ platform, title, placeho
       }
 
       const item = apiData.data[0];
+
+      switch (platform) {
+        case "instagram":
+          setResult({
+            downloadUrl: item.url,
+            title: item.title || "Downloaded Media",
+            thumbnail: item.thumbnail || item.url
+          });
+          return;
+        case "youtube":
+          console.log("apiData.data", apiData.data)
+          return {
+            downloadUrl: apiData.data?.formats?.[0]?.url,
+            title: apiData.data?.title,
+            thumbnail: apiData.data?.thumbnail
+          };
+      }
 
       setResult({
         downloadUrl: item.url,
