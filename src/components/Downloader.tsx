@@ -64,11 +64,11 @@ export const Downloader: React.FC<DownloaderProps> = ({ platform, title, placeho
           };
       }
 
-      setResult({
-        downloadUrl: item.url,
-        title: item.title || "Downloaded Media",
-        thumbnail: item.thumbnail || item.url
-      });
+      // setResult({
+      //   downloadUrl: item.url,
+      //   title: item.title || "Downloaded Media",
+      //   thumbnail: item.thumbnail || item.url
+      // });
 
     } catch (err: any) {
       setError(err.message || "Failed to process URL");
