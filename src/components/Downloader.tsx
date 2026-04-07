@@ -148,12 +148,20 @@ export const Downloader: React.FC<DownloaderProps> = ({ platform, title, placeho
                       Download Now
                     </a> */}
                     <a
-                      href={`https://downloaderbackend-5uz7.onrender.com/download?url=${encodeURIComponent(result.downloadUrl)}`}
+                      href={result.downloadUrl}
+                      download
                       className={`mt-4 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-white font-medium transition-all ${color} hover:opacity-90`}
                     >
                       <ExternalLink className="w-4 h-4" />
                       Download Now
                     </a>
+                    {/* <a
+                      href={`https://downloaderbackend-5uz7.onrender.com/download?url=${encodeURIComponent(result.downloadUrl)}`}
+                      className={`mt-4 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-white font-medium transition-all ${color} hover:opacity-90`}
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Download Now
+                    </a> */}
                   </div>
                 </div>
               </motion.div>
