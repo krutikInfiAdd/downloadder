@@ -57,7 +57,8 @@ export const Downloader: React.FC<DownloaderProps> = ({ platform, title, placeho
         case "youtube":
           console.log("apiData.data", apiData.data)
           return {
-            downloadUrl: apiData.data?.formats?.[0]?.url,
+            downloadUrlMP3: apiData.data?.formats?.[0]?.mp3,
+            downloadUrl: apiData.data?.formats?.[0]?.mp4,
             title: apiData.data?.title,
             thumbnail: apiData.data?.thumbnail
           };
