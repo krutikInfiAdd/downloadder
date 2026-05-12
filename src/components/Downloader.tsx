@@ -33,7 +33,10 @@ export const Downloader: React.FC<DownloaderProps> = ({ platform, title, placeho
     setResult(null);
 
     try {
-      const response = await axios.get(`https://downloaderbackend-5uz7.onrender.com/${platform}?url=${url}`);
+      const response = await axios.get(`https://downloaderbackend-5uz7.onrender.com/${platform}?url=${url}`,
+        {
+          timeout: 50000 // 50 seconds (in milliseconds)
+        });
 
       const apiData = response.data;
 
@@ -43,11 +46,29 @@ export const Downloader: React.FC<DownloaderProps> = ({ platform, title, placeho
 
       const item = apiData.data[0];
 
-      setResult({
-        downloadUrl: item.url,
-        title: item.title || "Downloaded Media",
-        thumbnail: item.thumbnail || item.url
-      });
+      switch (platform) {
+        case "instagram":
+          setResult({
+            downloadUrl: item.url,
+            title: item.title || "Downloaded Media",
+            thumbnail: item.thumbnail || item.url
+          });
+          return;
+        case "youtube":
+          console.log("apiData.data", apiData.data)
+          return {
+            downloadUrlMP3: apiData.data?.formats?.[0]?.mp3,
+            downloadUrl: apiData.data?.formats?.[0]?.mp4,
+            title: apiData.data?.title,
+            thumbnail: apiData.data?.thumbnail
+          };
+      }
+
+      // setResult({
+      //   downloadUrl: item.url,
+      //   title: item.title || "Downloaded Media",
+      //   thumbnail: item.thumbnail || item.url
+      // });
 
     } catch (err: any) {
       setError(err.message || "Failed to process URL");
@@ -138,7 +159,7 @@ export const Downloader: React.FC<DownloaderProps> = ({ platform, title, placeho
                       <h3 className="font-bold text-gray-800 line-clamp-2 mb-2">{result.title}</h3>
                       <p className="text-sm text-gray-500 truncate max-w-[250px]">{url}</p>
                     </div>
-                    <a
+                    {/* <a
                       href={result.downloadUrl}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -146,7 +167,22 @@ export const Downloader: React.FC<DownloaderProps> = ({ platform, title, placeho
                     >
                       <ExternalLink className="w-4 h-4" />
                       Download Now
+                    </a> */}
+                    <a
+                      href={result.downloadUrl}
+                      download
+                      className={`mt-4 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-white font-medium transition-all ${color} hover:opacity-90`}
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Download Now
                     </a>
+                    {/* <a
+                      href={`https://downloaderbackend-5uz7.onrender.com/download?url=${encodeURIComponent(result.downloadUrl)}`}
+                      className={`mt-4 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-white font-medium transition-all ${color} hover:opacity-90`}
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Download Now
+                    </a> */}
                   </div>
                 </div>
               </motion.div>
